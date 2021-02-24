@@ -27,6 +27,7 @@ DEBUG = (os.environ.get('DEBUG', '').lower() == 'true')
 
 ALLOWED_HOSTS = [
     '192.168.1.100', 'localhost', 'ownphotos-api.local','backend',
+    '127.0.0.1',
     os.environ.get('BACKEND_HOST'), 'ownphotos.local'
 ]
 
@@ -232,9 +233,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'protected_media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'librephotos_media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-DATA_ROOT = '/data'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'ownphotos'),
+)
+DATA_ROOT = os.path.join(BASE_DIR, 'librephotos_data')
 
 THUMBNAIL_SIZE_TINY = (30, 30)
 THUMBNAIL_SIZE_SMALL = (100, 100)
@@ -244,7 +248,7 @@ THUMBNAIL_SIZE_BIG = (2048, 2048)
 
 FULLPHOTO_SIZE = (1000, 1000)
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 IMAGE_SIMILARITY_SERVER = 'http://localhost:8002'

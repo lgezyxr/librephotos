@@ -114,11 +114,12 @@ def handle_new_image(user, image_path, job_id):
                 photo._extract_date_time_from_exif()
                 photo._extract_gps_from_exif()
                 photo._geolocate_mapbox()
-                photo._add_to_album_place()
-                photo._extract_faces()
-                photo._add_to_album_date()
-                photo._add_to_album_thing()
-                photo._im2vec()
+                photo._generate_prediction()
+                #photo._add_to_album_place()
+                #photo._extract_faces()
+                #photo._add_to_album_date()
+                #photo._add_to_album_thing()
+                #photo._im2vec()
 
                 elapsed = (datetime.datetime.now() - start).total_seconds()
                 util.logger.info(

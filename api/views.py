@@ -1,9 +1,10 @@
 from django.shortcuts import render
-
+import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-
+from rest_framework.parsers import FileUploadParser
 from constance import config as site_config
 
 from api.models import Photo, AlbumAuto, AlbumUser, Face, Person, AlbumDate, AlbumPlace, AlbumThing, LongRunningJob, User, get_or_create_person
@@ -50,7 +51,6 @@ from api.serializers import SharedFromMePhotoThroughSerializer
 
 from api.serializers import UserSerializer
 from api.serializers import ManageUserSerializer
-
 from api.serializers_serpy import AlbumDateListWithPhotoHashSerializer as AlbumDateListWithPhotoHashSerializerSerpy
 from api.serializers_serpy import PhotoSuperSimpleSerializer as PhotoSuperSimpleSerializerSerpy
 from api.serializers_serpy import PhotoSuperSimpleSerializerWithAddedOn as PhotoSuperSimpleSerializerWithAddedOnSerpy
@@ -86,6 +86,7 @@ from api.autoalbum import generate_event_albums, regenerate_event_titles
 from rest_framework.pagination import PageNumberPagination
 
 from rest_framework import filters
+
 
 import random
 import numpy as np
@@ -1756,6 +1757,8 @@ class MediaAccessFullsizeOriginalView(APIView):
 
             # grant access if the requested photo is public
             if photo.public:
+                print("path: " + path)
+                print("fname: " + fname)
                 response = HttpResponse()
                 response['Content-Type'] = 'image/jpeg'
                 response[
@@ -1896,3 +1899,20 @@ def media_access(request, path):
         return response
     else:
         return HttpResponseForbidden('Not authorized to access this media.')
+
+
+class test_api(APIView):
+    parser_classes = (FileUploadParser,)
+
+    def put(self, request, filename, format=None):
+        data =  dict(request.data)
+        file_obj = data['file']
+        print("dic:")
+        if request.user.scan_directory:
+            with open(os.path.join(request.user.scan_directory,filename), 'wb') as f:
+                for chunk in file_obj.chunks():
+                    f.write(chunk)
+        return Response({'dic': request.user.scan_directory},status=204)
+
+    def get(selfself, request, format=None):
+        return Response({'info': 'hello'})

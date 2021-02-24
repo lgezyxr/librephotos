@@ -10,9 +10,11 @@ def search_similar_image(user,photo):
         user_id = user
     else:
         user_id = user.id
-
-    image_embedding = np.array(
-        np.frombuffer(bytes.fromhex(photo.encoding)), dtype=np.float32)
+    if photo.encoding != None:
+        image_embedding = np.array(
+            np.frombuffer(bytes.fromhex(photo.encoding)), dtype=np.float32)
+    else:
+        image_embedding = np.array([])
     post_data = {
         "user_id":user_id,
         "image_embedding":image_embedding.tolist()
@@ -27,7 +29,7 @@ def search_similar_image(user,photo):
 def build_image_similarity_index(user):
     logger.info('builing similarity index for user {}'.format(user.username))
     photos = Photo.objects.filter(Q(hidden=False) & Q(owner=user)).exclude(encoding=None).only('encoding')
-
+    print("abababa:"+photos)
     image_hashes = []
     image_embeddings = []
 
@@ -44,4 +46,3 @@ def build_image_similarity_index(user):
     }
     res = requests.post(IMAGE_SIMILARITY_SERVER+'/build/',json=post_data)
     return res.json()
-

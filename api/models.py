@@ -36,7 +36,7 @@ from django_cryptography.fields import encrypt
 from api.im2vec import Im2Vec
 
 geolocator = Nominatim()
-default_tz = pytz.timezone('Asia/Seoul')
+default_tz = pytz.timezone('Asia/Shanghai')
 im2vec = Im2Vec(cuda=False)
 
 
@@ -142,6 +142,17 @@ class Photo(models.Model):
     
     objects = models.Manager()
     visible = VisiblePhotoManager()
+
+    predict_value = models.TextField(default=None, null=True)
+    lower_predict_range = models.TextField(default=None, null=True)
+    higher_predict_range = models.TextField(default=None, null=True)
+
+    # TODO: change this to the ML model
+    def _generate_prediction(self):
+        self.predict_value = "67.0"
+        self.lower_predict_range = "45.1"
+        self.higher_predict_range = "70.9"
+        self.save()
 
     def _generate_md5(self):
         hash_md5 = hashlib.md5()
@@ -766,3 +777,4 @@ for model in [
 ]:
     post_save.connect(receiver=change_api_updated_at, sender=model)
     post_delete.connect(receiver=change_api_updated_at, sender=model)
+

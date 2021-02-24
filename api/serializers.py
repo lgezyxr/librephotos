@@ -48,6 +48,9 @@ class PhotoSuperSimpleSerializer(serializers.ModelSerializer):
             'hidden',
             'exif_timestamp',
             'public',
+            'predict_value',
+            'lower_predict_range',
+            'higher_predict_range',
         )
 
 
@@ -71,6 +74,9 @@ class PhotoSimpleSerializer(serializers.ModelSerializer):
             'exif_gps_lon',
             'favorited',
             'geolocation_json',
+            'predict_value',
+            'lower_predict_range',
+            'higher_predict_range',
             'public',
         )
 
@@ -87,6 +93,10 @@ class PhotoSerializer(serializers.ModelSerializer):
     tiny_square_thumbnail_url = serializers.SerializerMethodField()
     similar_photos = serializers.SerializerMethodField()
 
+    predict_value = serializers.SerializerMethodField()
+    lower_predict_range = serializers.SerializerMethodField()
+    higher_predict_range = serializers.SerializerMethodField()
+
     image_url = serializers.SerializerMethodField()
     people = serializers.SerializerMethodField()
     shared_to = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -101,7 +111,8 @@ class PhotoSerializer(serializers.ModelSerializer):
                   'small_square_thumbnail_url', 'tiny_square_thumbnail_url',
                   'geolocation_json', 'exif_json', 'people', 'image_url',
                   'image_hash', 'image_path', 'favorited', 'hidden', 'public',
-                  'shared_to', 'similar_photos')
+                  'shared_to', 'similar_photos', 'predict_value', 'lower_predict_range',
+                  'higher_predict_range')
 
     def get_similar_photos(self, obj):
         res = search_similar_image(obj.owner,obj)
@@ -179,6 +190,14 @@ class PhotoSerializer(serializers.ModelSerializer):
     def get_people(self, obj):
         return [f.person.name for f in obj.faces.all()]
 
+    def get_prediction(self, obj):
+        return obj.predict_value
+
+    def get_higher_prediction(self, obj):
+        return obj.higher_predict_range
+
+    def get_lower_prediction(self, obj):
+        return obj.lower_predict_range
 
 class PersonSerializer(serializers.ModelSerializer):
     face_url = serializers.SerializerMethodField()
@@ -721,3 +740,4 @@ class SharedFromMePhotoThroughSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo.shared_to.through
         fields = ('user_id', 'user', 'photo')
+

@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+from django.conf.urls import url, include, re_path
 from django.urls import path
 from django.contrib import admin
 from django.conf import settings
@@ -22,7 +22,6 @@ from rest_framework import routers
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from api import views
 from nextcloud import views as nextcloud_views
-
 # from rest_framework_jwt.views import obtain_jwt_token
 # from rest_framework_jwt.views import refresh_jwt_token
 # from rest_framework_jwt.views import verify_jwt_token
@@ -195,7 +194,6 @@ router.register(
 router.register(r'api/faces', views.FaceViewSet)
 
 router.register(r'api/jobs', views.LongRunningJobViewSet)
-
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
@@ -246,7 +244,10 @@ urlpatterns = [
     url(r'^api/nextcloud/listdir', nextcloud_views.ListDir.as_view()),
     url(r'^api/nextcloud/scanphotos',
         nextcloud_views.ScanPhotosView.as_view()),
+    re_path(r'^api/test/(?P<filename>[^/]+)$',views.test_api.as_view())
 ]
 
 urlpatterns += [url('api/django-rq/', include('django_rq.urls'))]
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+urlpatterns += staticfiles_urlpatterns()
 # urlpatterns += [url(r'^silk/', include('silk.urls', namespace='silk'))]

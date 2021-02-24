@@ -32,12 +32,16 @@ class SharedPhotoSuperSimpleSerializer(serpy.Serializer):
         many=True, call=True, attr='shared_to.all')
 
 
+
 class PhotoSuperSimpleSerializer(serpy.Serializer):
     image_hash = serpy.StrField()
     favorited = serpy.BoolField()
     public = serpy.BoolField()
     hidden = serpy.BoolField()
     exif_timestamp = DateTimeField()
+    predict_value = serpy.StrField()
+    lower_predict_range = serpy.StrField()
+    higher_predict_range = serpy.StrField()
     # shared_to_count = serpy.IntField()
 
 
